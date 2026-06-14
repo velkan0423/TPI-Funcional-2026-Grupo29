@@ -62,3 +62,34 @@ Ejercicio-2:
 		)
 	)
 )
+Ejercicio-3:
+;; ========================================================
+;; FUNCIÓN: registro-semaforo
+;; NATURALEZA: Impura (Imprime resultados en pantalla)
+;; ESTRATEGIA: Secuencial (Ejecucion directa de las instrucciones)
+;; IMPACTO: No destructiva
+;; ========================================================
+
+(defun registro-semaforo(timer-unix color-anterior color-nuevo)   ;;Decimos el momento exacto en el que el semaforo cambio su color de uno a siguiente y cuales fueron estos". 
+	(format t "el tiempo ~A: la luz ha cambiado de ~A a ~A~%" timer-unix color-anterior color-nuevo)
+)
+
+Ejercicio-4:
+;; ========================================================
+;; FUNCIÓN: duracion-ciclo
+;; NATURALEZA: Pura (No altera nada)
+;; ESTRATEGIA: Orden Superior (LLama a otra funcion durante su ejecucion)
+;; IMPACTO: No destructiva
+;; ========================================================
+
+(defun duracion-ciclo (rojo amarillo verde)
+		(recomendacion-ciclo (+ rojo amarillo verde)) ;;Se suma la cantidad de segundos que dura cada color para caluclar el valor de un ciclo
+)
+
+(defun recomendacion-ciclo (total-seg)
+	(cond 
+		((< total-seg 35) 'el-ciclo-esta-por-debajo-de-lo-recomendado)
+		((> total-seg 150) 'el-ciclo-esta-por-encima-de-lo-recomendado)
+		(t 'el-ciclo-esta-dentro-de-lo-recomendado)
+	)
+)
