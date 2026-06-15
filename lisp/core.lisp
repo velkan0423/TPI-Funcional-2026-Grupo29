@@ -93,3 +93,58 @@ Ejercicio-4:
 		(t 'el-ciclo-esta-dentro-de-lo-recomendado)
 	)
 )
+Ejercicio-5:
+;; ========================================================
+;; FUNCIÓN: ciclo-por-tiempo
+;; NATURALEZA: Pura (mantiene los mismos parametros)
+;; ESTRATEGIA: Secuencial (ejecuta cada tarea de manera lineal)
+;; IMPACTO: No destructiva
+;; ========================================================
+
+(defun ciclos-por-tiempo (minutos)
+	(values (truncate (* minutos 60) 225)) ;; La funcion Values se encarga de eliminar el sobrante que resta luego del 0 o bien el 0
+)
+
+Ejercicio-6:
+
+;; ========================================================
+;; FUNCIÓN: porcentaje
+;; NATURALEZA: Pura (Mantiene los mismos parametros)
+;; ESTRATEGIA: Orden Superior (Trabaja en conjunto con otras funciones)
+;; IMPACTO: Destructiva (no altera la informacion original)
+;; ========================================================
+
+(defun porcentaje (hora)
+    (list ;;aplicamos regla de 3 simples a cada uno de los colores para sacar su porcentaje
+        'rojo (float (/ (* (contador-rojo hora) 100) hora))
+        'amarillo (float (/ (* (contador-amarillo hora) 100) hora))
+        'verde (float (/ (* (contador-verde hora) 100) hora))
+    )
+)
+
+(defun contador-rojo (hora)
+    (cond
+        ((<= hora 0) 0)
+        ((< hora 93) hora) ;;Los segundos que quedan por debajo de los 93seg se suman automaticamente              
+        ((<= hora 225) 93) ;;Los segundos que quedan por debajo de 225 (ciclo rojo + ciclo verde) hacen que automaticamente se sumen 93 al total debido a que eso le corresponde al rojo            
+        ((> hora 0) (+ 93 (contador-rojo (- hora 225))))
+    )
+)
+
+(defun contador-amarillo (hora)
+    (cond
+        ((<= hora 0) 0)
+        ((<= hora 93) 0) ;;Si los segundos estan por debajo a los 93 no se suma nada debido a que le corresponde a otro color              
+        ((< hora 102) (- hora 93)) ;;Los segundos que queden por encima de los 93 seran sumando al ciclo del amarillo     
+        ((> hora 0) (+ 9 (contador-amarillo (- hora 225))))
+    )
+)
+
+(defun contador-verde (hora)
+    (cond
+        ((<= hora 0) 0)
+        ((<= hora 102) 0) ;;Los segundos por debajo de los 102 ya no seran contados ya que eso corresponde a otros dos ciclos (rojo + amarillo)
+        ((< hora 225) (- hora 102)) ;;Los segundos por encima de los 102 seran sumandos ya que corresponde a el color verde, pero estos deben estar por debajo de 225 (un ciclo completo)    
+        ((> hora 0) (+ 123 (contador-verde (- hora 225))))
+    )
+)
