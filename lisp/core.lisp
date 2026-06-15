@@ -148,3 +148,51 @@ Ejercicio-6:
         ((> hora 0) (+ 123 (contador-verde (- hora 225))))
     )
 )
+
+Iteracion 2: 
+
+;; ========================================================
+;; FUNCIÓN: informe
+;; NATURALEZA: Impura (Genera un efecto secundario: escribir en disco).
+;; ESTRATEGIA: Orden Superior (Utiliza 'mapcar' y 'lambda' para iterar).
+;; IMPACTO: Destructiva (Sobrescribe/crea el archivo en el sistema operativo).
+;; ========================================================
+
+(defun informe (datos)
+    (with-open-file (stream "informe-ejecucion-semaforo.txt" :direction :output :if-exists :supersede)
+        
+        ;; 1. Imprimimos el encabezado estático
+        (format stream "Informe de Ejecución del Sistema Semafórico~%")
+        (format stream "=========================================~%")
+        
+        ;; 2. La magia funcional: mapcar recorre la lista sin usar bucles
+        (mapcar 
+            (lambda (registro)
+                ;; Desarmamos la sub-lista actual y la mandamos al archivo
+                (format stream "~A - Transicion: ~A -> ~A~%" 
+                    (formatear-fecha (first registro))   ;; El tiempo Unix
+                    (second registro)  ;; El color anterior
+                    (third registro)   ;; El color nuevo
+                )
+            ) 
+            datos ;; La lista histórica que estamos recorriendo
+        )
+        
+        ;; 3. Imprimimos el pie de página
+        (format stream "~% --- Fin del Informe ---")
+    )
+)
+
+;; ========================================================
+;; FUNCIÓN: formatear-fecha
+;; NATURALEZA: Pura (Mismo timestamp Unix siempre da el mismo string).
+;; ESTRATEGIA: Secuencial / Lineal.
+;; IMPACTO: No destructiva (Retorna un string nuevo sin alterar el Unix original).
+;; ========================================================
+
+(defun formatear-fecha (tiempo-unix)
+    (local-time:format-timestring nil 
+        (local-time:unix-to-timestamp tiempo-unix)
+        :format '(:year "-" :month "-" :day " " :hour ":" :min ":" :sec)
+    )
+)
