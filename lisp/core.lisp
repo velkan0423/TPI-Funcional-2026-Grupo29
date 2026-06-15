@@ -26,7 +26,7 @@ Ejercicio-1:
 
 		(t (list (color-actual 'transcicion-invalida)));;caso en el que el color ingresado sea distinto al del semaforo
 	)
-)
+) 
 
 Ejercicio-2:
 ;; ========================================================
