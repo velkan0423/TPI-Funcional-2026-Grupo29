@@ -1,7 +1,5 @@
 # Código de Honor
-
-Declaramos que este trabajo fue realizado respetando las normas académicas establecidas para la materia.
-
-No se utilizó plagio ni soluciones externas no autorizadas.
-
-Todos los integrantes participaron activamente en el desarrollo del trabajo práctico.
+Integrante 1: [Zarate Lucas Martin] - Usuario github: [velkan0423]
+1. **Codigo en Common Lisp**: Con fines eductavos y optimizacion de tiempo hice uso de geminis como asistente para hacer un peritaje del codigo original llamado coreAlfa.lisp, de esta forma me percate de la importancia del uso de recursion de cola y de la simplificacion de algunas partes del codigo.
+2. **Codigo de lenguaje asignado:** En la asignacion de shceme como codigo asignado por la catedra para nuestro miembro del equipo 29 no tube partisipacion, por lo que la asignacion fue dado a otro miembro del equipo, para su desarrollo y optimizacion.
+3. **Redaccion del informe y respuesta Teorica:** Finalmente la redaccion del informe use geminis como fuente de informacion teorica para mejora la eficiencia y reducir la informacion mas importante de fuentes oficiales y de la catedra aplicada en cada bloque del codigo, una vez redactada estableci una audoria para mejorar la redaccion y ademas realice mas investigacion haciendo preguntas especificas para mejorar la claridad de la informacion redactada. De forma, me concentre en usar geminies como asistente para obtencion informacion en un periodo de tiempo muy corto y mejora en la sintaxis.Desde este punto el desarrollo y las desiciones de la separacion de la informacion y estructura fue de mi propia autonomia.
