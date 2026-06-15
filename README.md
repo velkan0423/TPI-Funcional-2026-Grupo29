@@ -189,7 +189,8 @@ sbcl --script lisp/core.lisp
 | ------------------- | ----------- |
 | Zarate Lucas Martin | @velkan0423 |
 | Nombre Apellido     | @usuario    |
-
+| Nombre Apellido     | @usuario    |
+| Nombre Apellido     | @usuario    |
 ---
 
 # 📖 Bibliografía
