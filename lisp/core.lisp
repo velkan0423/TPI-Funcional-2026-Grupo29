@@ -58,7 +58,7 @@ Ejercicio-2:
             ((< segundo-actual 99) 'amarillo)
             ((< segundo-actual 102) 'intermitente-amarillo)
             ((< segundo-actual 222) 'verde
-            (else 'intermitente-verde)
+            (t 'intermitente-verde)
 		)
 	)
 )
