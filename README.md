@@ -185,12 +185,12 @@ sbcl --script lisp/core.lisp
 
 # 👥 Integrantes
 
-| Integrante          | GitHub      |
-| ------------------- | ----------- |
-| Zarate Lucas Martin | @velkan0423 |
-| Portillo Joel       | @joelito1234|
-| Nombre Apellido     | @usuario    |
-| Nombre Apellido     | @usuario    |
+| Integrante          | GitHub       |
+| ------------------- | -----------  |
+| Zarate Lucas Martin | @velkan0423  |
+| Portillo Joel       | @joelito1234 |
+| Meza Lautaro        | @lautymeza427|
+| Nombre Apellido     | @usuario     |
 ---
 
 # 📖 Bibliografía
