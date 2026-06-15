@@ -188,7 +188,7 @@ sbcl --script lisp/core.lisp
 | Integrante          | GitHub      |
 | ------------------- | ----------- |
 | Zarate Lucas Martin | @velkan0423 |
-| Nombre Apellido     | @usuario    |
+| Portillo Joel       | @joelito1234|
 | Nombre Apellido     | @usuario    |
 | Nombre Apellido     | @usuario    |
 ---
