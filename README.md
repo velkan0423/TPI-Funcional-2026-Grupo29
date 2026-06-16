@@ -30,7 +30,8 @@ Además, se realiza un análisis comparativo entre **Common Lisp** y **Scheme**,
 ```plaintext
 TPI-Funcional-2026-Grupo[X]/
 ├── lisp/
-│   ├── core.lisp
+│   ├── coreAlfa.lisp  ; Codigo inicial antes de las optimizaciones y simplificacion
+|   ├── coreFinal.lisp ; Codigo Final despues de las optimizaciones y simplificacion
 │   └── config.json
 ├── comparativa/
 │   └── solucion.scm
