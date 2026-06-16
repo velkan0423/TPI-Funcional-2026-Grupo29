@@ -190,7 +190,7 @@ sbcl --script lisp/core.lisp
 | Zarate Lucas Martin | @velkan0423  |
 | Portillo Joel       | @joelito1234 |
 | Meza Lautaro        | @lautymeza427|
-| Nombre Apellido     | @usuario     |
+| Quinteros Agustin   | @Agustín-Quin|
 ---
 
 # 📖 Bibliografía
