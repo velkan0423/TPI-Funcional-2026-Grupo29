@@ -179,27 +179,6 @@
       
       ;; 4. Tramo Amarillo Fijo: Caso por defecto para el resto del ciclo (de 88 a 92)
       (t 'en-amarillo))))
-
-
-;;; ============================================
-;;; 4. CAPA DE SALIDA (EFECTOS SECUNDARIOS Y PERSISTENCIA)
-;;; ============================================
-
-;; ========================================================
-;; FUNCIÓN: informe
-;; NATURALEZA: Impura (Su ejecución depende de y afecta activamente al sistema operativo).
-;; ESTRATEGIA: Secuencial / Lineal (Abre el descriptor, inyecta la cadena formateada y cierra el flujo).
-;; IMPACTO: Destructiva (Modifica el estado físico del almacenamiento secundario mediante el modo :append).
-;; ========================================================
-(defun informe (datos ruta-archivo)
-  (with-open-file (stream ruta-archivo
-                          :direction :output
-                          :if-exists :append
-                          :if-does-not-exist :create)
-    (format stream "~%Timestamp: ~A | Estado: ~A"
-            (first datos)
-            (second datos))))
-
 ;;; ========================================================
 ;;; 4. CAPA DE SALIDA (EFECTOS SECUNDARIOS Y PERSISTENCIA)
 ;;; ========================================================
