@@ -1,1 +1,6 @@
-{}
+{
+  "id": "semaforo-central-01",
+  "t-rojo": 40,
+  "t-amarillo": 5,
+  "t-verde": 35
+}
