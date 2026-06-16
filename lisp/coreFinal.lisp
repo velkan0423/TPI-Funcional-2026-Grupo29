@@ -68,22 +68,6 @@
 (defun obtener-tiempo-verde (configuracion)
   (cdr (assoc :VERDE configuracion)))
 
-
-
-;;; ============================================
-;;; 1. SELECTORES SEMÁNTICOS (ENCAPSULAN EL ACCESO AL JSON)
-;;; ============================================
-
-(defun obtener-tiempo-rojo (configuracion)
-  (cdr (assoc :ROJO configuracion)))
-
-(defun obtener-tiempo-amarillo (configuracion)
-  (cdr (assoc :AMARILLO configuracion)))
-
-(defun obtener-tiempo-verde (configuracion)
-  (cdr (assoc :VERDE configuracion)))
-
-
 ;; ========================================================
 ;; FUNCIÓN: duracion-ciclo
 ;; NATURALEZA: Pura (La suma de los mismos tres tiempos más la extensión da el mismo resultado).
