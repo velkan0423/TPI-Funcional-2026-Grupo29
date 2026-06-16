@@ -1,18 +1,3 @@
-;;;Para este Programa usaremos quicklisp "https://www.quicklisp.org/beta/"
-;;;descargamos.
-;;;Para Instalar seguimos los siguientes comandos en en nuestro Clisp.
-;;;       (load "quicklisp.lisp")
-;;;       (quicklisp-quickstart:install)
-;;;       (ql:add-to-init-file)
-
-;;;Una ves instalado quicklisp, esto nos permitira cl-JSON para instalarlo
-;;;Ponemos el siguiente comando en nuestro Clisp
-;;;       (ql:quickload "cl-json") 
-;;; y luego 
-;;;         (use-package :cl-json)
-
-
-;;;
 ;;;; *************************************************** 
 ;;;; Fichero: backend-semaforo.lisp 
 ;;;; Fecha-de-creación: Junio 2026
@@ -20,24 +5,23 @@
 ;;;; Comentarios: Núcleo funcional para simulación vial con metadatos de paradigma.
 ;;;; Autores: Grupo 29
 ;;;; ***************************************************
-
 ;;; ============================================
 ;;; 1. CAPA ADAPTADORA (INTEROPERABILIDAD JSON)
 ;;; ============================================
-
+;;; ((:ROJO . 40) (:AMARILLO . 5) (:VERDE . 45))
 ;; ========================================================
 ;; FUNCIÓN: adaptar-entrada-json
 ;; NATURALEZA: Pura (Retorna la misma lista para las mismas entradas asociativas).
 ;; ESTRATEGIA: Mapeo y Extracción de Pares (Busca claves específicas en la estructura asociativa).
 ;; IMPACTO: No destructiva (Genera una lista posicional totalmente nueva).
 ;; ========================================================
-(defun adaptar-entrada-json (datos-json) 
-  (let ((tiempo-r (cdr (assoc :ROJO datos-json)))
-        (tiempo-a (cdr (assoc :AMARILLO datos-json)))
-        (tiempo-v (cdr (assoc :VERDE datos-json)))) 
-    (list tiempo-r tiempo-a tiempo-v)))
+;;(defun adaptar-entrada-json (datos-json) 
+;;  (let ((tiempo-r (cdr (assoc :ROJO datos-json)))
+;;        (tiempo-a (cdr (assoc :AMARILLO datos-json)))
+;;        (tiempo-v (cdr (assoc :VERDE datos-json)))) 
+;;    (list tiempo-r tiempo-a tiempo-v)))
 
-
+;; (40 5 45)
 ;;; ============================================
 ;;; 2. SELECTORES SEMÁNTICOS Y MÉTRICAS VIALES
 ;;; ============================================
@@ -48,15 +32,57 @@
 ;; ESTRATEGIA: Extracción Secuencial (Usa funciones primitivas como 'first', 'second' y 'third').
 ;; IMPACTO: No destructiva (Lee la lista sin modificarla).
 ;; ========================================================
+;; (FIRST (40 5 45))  ==> 40
+
+;; (defun obtener-tiempo-rojo (configuracion)
+;;  (first configuracion))
+
+;; (defun obtener-tiempo-amarillo (configuracion)
+;;  (second configuracion))
+
+;; (defun obtener-tiempo-verde (configuracion)
+;;  (third configuracion))
+
+
+;;---------------------------------------------------------------------------
+
+;;; Toda lo anterior puede ser encapsulados en la funcion de las dos funciones
+
+;;; ========================================================
+;;; 1. SELECTORES SEMÁNTICOS (ENCAPSULAN EL ACCESO AL JSON)
+;;; ========================================================
+
+;; ========================================================
+;; FUNCIÓN: obtener-tiempo-rojo / obtener-tiempo-amarillo / obtener-tiempo-verde
+;; NATURALEZA: Pura (Siempre extrae el mismo valor para la misma estructura asociativa).
+;; ESTRATEGIA: Búsqueda por Clave Asociativa (Usa funciones primitivas 'assoc' y 'cdr' para indexar el mapa).
+;; IMPACTO: No destructiva (Lee la estructura asociativa sin alterar los pares originales).
+;; ========================================================
 
 (defun obtener-tiempo-rojo (configuracion)
-  (first configuracion))
+  (cdr (assoc :ROJO configuracion)))
 
 (defun obtener-tiempo-amarillo (configuracion)
-  (second configuracion))
+  (cdr (assoc :AMARILLO configuracion)))
 
 (defun obtener-tiempo-verde (configuracion)
-  (third configuracion))
+  (cdr (assoc :VERDE configuracion)))
+
+
+
+;;; ============================================
+;;; 1. SELECTORES SEMÁNTICOS (ENCAPSULAN EL ACCESO AL JSON)
+;;; ============================================
+
+(defun obtener-tiempo-rojo (configuracion)
+  (cdr (assoc :ROJO configuracion)))
+
+(defun obtener-tiempo-amarillo (configuracion)
+  (cdr (assoc :AMARILLO configuracion)))
+
+(defun obtener-tiempo-verde (configuracion)
+  (cdr (assoc :VERDE configuracion)))
+
 
 ;; ========================================================
 ;; FUNCIÓN: duracion-ciclo
@@ -64,6 +90,12 @@
 ;; ESTRATEGIA: Composición Matemática (Suma los resultados de otras funciones puras y un entero constante).
 ;; IMPACTO: No destructiva (Solo realiza cálculos aritméticos sin alterar el entorno).
 ;; ========================================================
+
+;; (FIRST (40 5 45))  ==> 40
+;; (second (40 5 45)) ==> 5
+;; (third (40 5 45))  ==> 45 
+;; encima agrega 3 segundos
+
 (defun duracion-ciclo (configuracion)
   (+ (obtener-tiempo-rojo configuracion)
      (obtener-tiempo-amarillo configuracion)
@@ -81,8 +113,6 @@
       ((< total 35) 'ciclo-muy-corto-ajustar-a-alta-densidad)
       ((> total 150) 'ciclo-muy-largo-riesgo-de-congestion)
       (t 'ciclo-optimo-flujo-vehicular-eficiente))))
-
-
 
 
 ;; ========================================================
@@ -114,44 +144,56 @@
 ;; ========================================================
 (defun transicion (color-actual cambiar-a)
   (cond
-    ((and (eq color-actual 'en-rojo) (eq cambiar-a 'verde))
-     (list color-actual "cambiar-a-verde"))
+    ;; REGLA DE PERMANENCIA: Si el temporizador calcula el mismo color en el que ya está,
+    ;; se mantiene el estado de forma explícita y segura sin romper el ciclo.
+    ((eq color-actual cambiar-a)
+     (list color-actual "mantener-estado-actual"))
 
-    ((and (eq color-actual 'en-verde) (eq cambiar-a 'amarillo))
-     (list color-actual "cambiar-a-amarillo"))
-
-    ((and (eq color-actual 'en-amarillo) (eq cambiar-a 'rojo))
-     (list color-actual "cambiar-a-rojo"))
+    ;; Transiciones de cambio de fase tradicionales
+    ((and (eq color-actual 'en-rojo) (eq cambiar-a 'en-verde))
+     (list cambiar-a "cambiar-a-verde"))
 
     ((and (eq color-actual 'en-verde) (eq cambiar-a 'amarillo-intermitente))
-     (list color-actual "cambiar-a-amarillo-intermitente"))
+     (list cambiar-a "cambiar-a-amarillo-intermitente"))
 
-    ((and (eq color-actual 'amarillo-intermitente) (eq cambiar-a 'rojo))
-     (list color-actual "cambiar-a-rojo"))
+    ((and (eq color-actual 'amarillo-intermitente) (eq cambiar-a 'en-amarillo))
+     (list cambiar-a "cambiar-a-amarillo"))
 
+    ((and (eq color-actual 'en-amarillo) (eq cambiar-a 'en-rojo))
+     (list cambiar-a "cambiar-a-rojo"))
+
+    ;; Caso de resguardo definitivo
     (t
      (list color-actual "accion-por-defecto"))))
 
 ;; ========================================================
 ;; FUNCIÓN: timer-seguro
-;; NATURALEZA: Pura (Para un mismo segundo exacto y configuración, devuelve el mismo estado).
-;; ESTRATEGIA: Matemática y Condicional (Calcula el módulo respecto al ciclo total y evalúa tramos con ventanas de seguridad).
-;; IMPACTO: No destructiva (No altera el reloj universal, solo evalúa proyecciones de tiempo numéricas).
+;; NATURALEZA: Pura (Retorna siempre la misma fase vial para el mismo segundo del ciclo).
+;; ESTRATEGIA: Evaluación de Rangos Acumulativos (Usa los umbrales de tiempo para delimitar tramos).
+;; IMPACTO: No destructiva (Determina el estado simbólico a partir de cálculos matemáticos puros).
 ;; ========================================================
 (defun timer-seguro (time-exac configuracion)
   (let* ((t-rojo (obtener-tiempo-rojo configuracion))
-         (t-amarillo (obtener-tiempo-amarillo configuracion))
          (t-verde (obtener-tiempo-verde configuracion))
-         (ciclo-total (duracion-ciclo configuracion))
-         (segundo-actual (mod time-exac ciclo-total)))
-    (cond 
-      ;; 1. Tramo Rojo
+         ;; Buscamos el hito temporal directamente desde la estructura asociativa del JSON
+         (inicio-epoch (cdr (assoc :INICIO-EPOCH configuracion)))
+         
+         ;; IMPLEMENTACIÓN:
+         ;; Restamos el hito operacional al tiempo absoluto actual de la CPU (time-exac - inicio-epoch)
+         ;; e inmediatamente aplicamos el módulo de la duración total del ciclo.
+         (segundo-actual (mod (- time-exac inicio-epoch) (duracion-ciclo configuracion))))
+    
+    (cond
+      ;; 1. Tramo Rojo: de 0 a 39
       ((< segundo-actual t-rojo) 'en-rojo) 
-      ;; 2. Tramo Verde 
+      
+      ;; 2. Tramo Verde: de 40 a 84
       ((< segundo-actual (+ t-rojo t-verde)) 'en-verde) 
-      ;; 3. Tramo de Seguridad (Consume 3 segundos justo antes de la transición) 
+ 
+      ;; 3. Tramo Amarillo Intermitente (Seguridad): de 85 a 87
       ((< segundo-actual (+ t-rojo t-verde 3)) 'amarillo-intermitente) 
-      ;; 4. Tramo Amarillo Fijo (El resto del tiempo del ciclo)
+      
+      ;; 4. Tramo Amarillo Fijo: Caso por defecto para el resto del ciclo (de 88 a 92)
       (t 'en-amarillo))))
 
 
@@ -176,101 +218,18 @@
 
 ;; ========================================================
 ;; FUNCIÓN: procesar-estado-seguro
-;; NATURALEZA: Impura (Al invocar a la función 'informe', hereda sus efectos secundarios).
-;; ESTRATEGIA: Composición Secuencial (Orquesta la evaluación temporal y la posterior persistencia forense).
-;; IMPACTO: Destructiva (Genera un efecto secundario directo en el disco, manteniendo la salida limpia para la interfaz visual).
+;; NATURALEZA: Impura (Hereda la naturaleza de Entrada/Salida de 'informe').
+;; ESTRATEGIA: Composición Funcional y Vinculación Vial.
+;; IMPACTO: Destructiva (Genera persistencia física mediante append en disco).
 ;; ========================================================
-(defun procesar-estado-seguro (time-exac configuracion ruta-archivo)
-  (let ((estado-actual (timer-seguro time-exac configuracion)))
-    (informe (list time-exac estado-actual) ruta-archivo)
-    estado-actual))
-
-
-;;; ============================================
-;;; REQUERIMIENTO 7: ASEGURAMIENTO DE LA CALIDAD (TESTING)
-;;; ============================================
-;;; A continuación se presentan los casos de prueba solicitados por el equipo
-;;; de control de calidad, cubriendo caminos normales, alternativos y de error.
-
-;; ---------------------------------------------------------
-;; PRUEBAS PARA: transicion
-;; ---------------------------------------------------------
-
-;; 1. Camino Normal (Happy Path): Transición esperada y válida.
-;; Esperado: (EN-ROJO "cambiar-a-verde")
-(transicion 'en-rojo 'verde)
-
-;; 2. Camino Alternativo: Transición hacia un estado de seguridad intermitente.
-;; Esperado: (EN-VERDE "cambiar-a-amarillo-intermitente")
-(transicion 'en-verde 'amarillo-intermitente)
-
-;; 3. Camino de Error (Lógico): Intento de transición con colores inexistentes.
-;; Esperado: El sistema no colapsa, captura el error y devuelve: (AZUL "accion-por-defecto")
-(transicion 'azul 'magenta)
-
-;; 4. Camino de Error (Sintáctico): Falta de argumentos.
-;; Esperado: ERROR fatal del compilador (invalid number of arguments).
-;; (transicion 'en-rojo) ; Descomentar para forzar el quiebre.
-
-
-;; ---------------------------------------------------------
-;; PRUEBAS PARA: adaptar-entrada-json
-;; ---------------------------------------------------------
-
-;; 1. Camino Normal: Diccionario Alist perfectamente estructurado.
-;; Esperado: (45 5 40)
-(adaptar-entrada-json '((rojo . 45) (amarillo . 5) (verde . 40)))
-
-;; 2. Camino Alternativo: El JSON llega con las llaves en distinto orden.
-;; Esperado: La función extrae por llave, no por posición. Retorna: (45 5 40)
-(adaptar-entrada-json '((verde . 40) (rojo . 45) (amarillo . 5)))
-
-;; 3. Camino de Error (Lógico): El JSON llega corrupto o faltan llaves vitales.
-;; Esperado: (45 NIL 40) - El sistema detecta la ausencia sin romper la ejecución.
-(adaptar-entrada-json '((rojo . 45) (azul . 99) (verde . 40)))
-
-
-;; ---------------------------------------------------------
-;; PRUEBAS PARA: recomendacion-ciclo (y duracion-ciclo)
-;; ---------------------------------------------------------
-;; Nota: Recordar que la función suma 3 segundos extra físicamente.
-
-;; 1. Camino Normal: Una configuración estándar (45 + 5 + 40 + 3 = 93 seg).
-;; Esperado: CICLO-OPTIMO-FLUJO-VEHICULAR-EFICIENTE
-(recomendacion-ciclo '(45 5 40))
-
-;; 2. Camino Alternativo 1 (Límite Inferior): Tiempos irreales muy cortos (10+2+10+3 = 25 seg).
-;; Esperado: CICLO-MUY-CORTO-AJUSTAR-A-ALTA-DENSIDAD
-(recomendacion-ciclo '(10 2 10))
-
-;; 3. Camino Alternativo 2 (Límite Superior): Tiempos propensos a embotellamiento (80+10+80+3 = 173 seg).
-;; Esperado: CICLO-MUY-LARGO-RIESGO-DE-CONGESTION
-(recomendacion-ciclo '(80 10 80))
-
-;; 4. Camino de Error: Inyección de datos de tipo incorrecto (Strings en vez de Integers).
-;; Esperado: ERROR fatal de tipado (The value "45" is not of type NUMBER).
-;; (recomendacion-ciclo '("45" "5" "40")) ; Descomentar para forzar el quiebre.
-
-
-;; ---------------------------------------------------------
-;; PRUEBAS PARA: timer-seguro
-;; ---------------------------------------------------------
-;; Usando la configuración '(45 5 40) cuyo ciclo total es de 93 segundos.
-
-;; 1. Camino Normal: Segundo 10 (Cae holgadamente dentro del primer tramo rojo de 45s).
-;; Esperado: EN-ROJO
-(timer-seguro 10 '(45 5 40))
-
-;; 2. Camino Alternativo (Edge Case): Exactamente en el segundo 86.
-;; (45 rojo + 40 verde = 85. El segundo 86 entra en la ventana de 3s de seguridad).
-;; Esperado: AMARILLO-INTERMITENTE
-(timer-seguro 86 '(45 5 40))
-
-;; 3. Camino Alternativo (Loop Temporal): Segundo 100.
-;; (Supera el ciclo de 93s, el módulo lo reinicia al segundo 7 del nuevo ciclo).
-;; Esperado: EN-ROJO
-(timer-seguro 100 '(45 5 40))
-
-;; 4. Camino de Error: Enviar un timestamp vacío o tipo de dato no numérico.
-;; Esperado: ERROR fatal (The value NIL is not of type REAL).
-;; (timer-seguro nil '(45 5 40)) ; Descomentar para forzar el quiebre.
+(defun procesar-estado-seguro (time-exac estado-anterior configuracion ruta-archivo)
+  (let* ((estado-calculado (timer-seguro time-exac configuracion))
+         ;; Aquí invocamos formalmente a transicion usando el estado previo y el nuevo
+         (resultado-vial (transicion estado-anterior estado-calculado))
+         (estado-validado (first resultado-vial)))
+    
+    ;; Persistimos el estado validado por las reglas de la función transicion
+    (informe (list time-exac estado-validado) ruta-archivo)
+    
+    ;; Retornamos el estado para que la simulación continúe en el siguiente ciclo
+    estado-validado))
