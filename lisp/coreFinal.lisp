@@ -216,6 +216,44 @@
             (first datos)
             (second datos))))
 
+;;; ========================================================
+;;; 4. CAPA DE SALIDA (EFECTOS SECUNDARIOS Y PERSISTENCIA)
+;;; ========================================================
+
+;; ========================================================
+;; FUNCIÓN: formatear-fecha-auditoria
+;; NATURALEZA: Pura (Para un mismo timestamp universal, devuelve siempre la misma cadena).
+;; ESTRATEGIA: Descomposición Temporal y Formateo Lineal (Usa 'decode-universal-time').
+;; IMPACTO: No destructiva (Retorna un string nuevo sin alterar datos).
+;; ========================================================
+(defun formatear-fecha-auditoria (timestamp-universal)
+  ;; decode-universal-time devuelve: (second minute hour date month year day-of-week daylight-saving-time-p timezone)
+  ;; Usamos multiple-value-bind para capturar de forma inmutable los primeros 6 valores que necesitamos.
+  (multiple-value-bind (seg min hora dia mes ano)
+      (decode-universal-time timestamp-universal)
+    ;; Formateamos con ~4,'0D para el año (4 dígitos) y ~2,'0D para garantizar 2 dígitos rellenados con cero si es necesario.
+    (format nil "~4,'0D-~2,'0D-~2,'0D ~2,'0D:~2,'0D:~2,'0D"
+            ano mes dia hora min seg)))
+
+;; ========================================================
+;; FUNCIÓN: informe
+;; NATURALEZA: Impura (Su ejecución afecta activamente al sistema de archivos del sistema operativo).
+;; ESTRATEGIA: Secuencial con Conversión de Formato (Aplica formato legible antes de la persistencia).
+;; IMPACTO: Destructiva (Modifica el estado físico del almacenamiento mediante modo :append).
+;; ========================================================
+(defun informe (datos ruta-archivo)
+  (with-open-file (stream ruta-archivo
+                          :direction :output
+                          :if-exists :append
+                          :if-does-not-exist :create)
+    ;; datos contiene: (segundo-real estado-validado)
+    ;; Convertimos el segundo-real de simulación (que es un Unix Timestamp) de vuelta a Universal Time de Common Lisp.
+    ;; Como en tu 'main.lisp' restaste 2208988800 para pasarlo a Unix, aquí le sumamos esa misma constante para decodificarlo correctamente.
+    (let ((fecha-legible (formatear-fecha-auditoria (+ (first datos) 2208988800))))
+      (format stream "~%[AUDITORIA] Fecha: ~A | Estado: ~A"
+              fecha-legible
+              (second datos)))))
+
 ;; ========================================================
 ;; FUNCIÓN: procesar-estado-seguro
 ;; NATURALEZA: Impura (Hereda la naturaleza de Entrada/Salida de 'informe').
@@ -224,12 +262,10 @@
 ;; ========================================================
 (defun procesar-estado-seguro (time-exac estado-anterior configuracion ruta-archivo)
   (let* ((estado-calculado (timer-seguro time-exac configuracion))
-         ;; Aquí invocamos formalmente a transicion usando el estado previo y el nuevo
-         (resultado-vial (transicion estado-anterior estado-calculado))
+         (resultado-vial (transicion estado-anterior estado-calculado)) 
          (estado-validado (first resultado-vial)))
     
-    ;; Persistimos el estado validado por las reglas de la función transicion
+    ;; Persistimos enviando el timestamp bruto; la conversión se encapsula adentro de 'informe'
     (informe (list time-exac estado-validado) ruta-archivo)
     
-    ;; Retornamos el estado para que la simulación continúe en el siguiente ciclo
     estado-validado))
