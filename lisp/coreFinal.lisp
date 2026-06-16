@@ -34,7 +34,7 @@
 (defun adaptar-entrada-json (datos-json) 
   (let ((tiempo-r (cdr (assoc :ROJO datos-json)))
         (tiempo-a (cdr (assoc :AMARILLO datos-json)))
-        (tiempo-v (cdr (assoc :VARDE datos-json)))) 
+        (tiempo-v (cdr (assoc :VERDE datos-json)))) 
     (list tiempo-r tiempo-a tiempo-v)))
 
 
