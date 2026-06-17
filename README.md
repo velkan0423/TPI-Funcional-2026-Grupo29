@@ -180,7 +180,7 @@ sbcl --script lisp/core.lisp
 # 🎥 Video de defensa
 
 📺 Enlace al video:
-(Aquí colocar enlace de YouTube)
+Enlace de video: (https://youtu.be/8kmITkUoEOA)
 
 ---
 
