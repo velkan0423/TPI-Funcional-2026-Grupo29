@@ -217,4 +217,4 @@ Este proyecto fue realizado con fines exclusivamente académicos para la materia
 
 ---
 
-# ❤️ Desarrollado por Grupo [X]
+# ❤️ Desarrollado por Grupo [29]
